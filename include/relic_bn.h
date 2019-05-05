@@ -33,8 +33,8 @@
  * @ingroup bn
  */
 
-#ifndef RLC_BN_H
-#define RLC_BN_H
+#ifndef RELIC_BN_H
+#define RELIC_BN_H
 
 #include "relic_conf.h"
 #include "relic_util.h"
@@ -53,33 +53,33 @@
  * multiple precision integer must grow. Otherwise, it represents the fixed
  * fixed precision.
  */
-#define RLC_BN_BITS 	((int)BN_PRECI)
+#define RELIC_BN_BITS 	((int)BN_PRECI)
 
 /**
  * Size in digits of a block sufficient to store the required precision.
  */
-#define RLC_BN_DIGS		((int)RLC_CEIL(BN_PRECI, RLC_DIG))
+#define BN_DIGS			((int)CEIL(BN_PRECI, DIGIT))
 
 /**
  * Size in digits of a block sufficient to store a multiple precision integer.
  */
 #if BN_MAGNI == DOUBLE
-#define RLC_BN_SIZE		((int)(2 * RLC_BN_DIGS + 2))
+#define BN_SIZE		((int)(2 * BN_DIGS + 2))
 #elif BN_MAGNI == CARRY
-#define RLC_BN_SIZE		((int)(RLC_BN_DIGS + 1))
+#define BN_SIZE		((int)(BN_DIGS + 1))
 #elif BN_MAGNI == SINGLE
-#define RLC_BN_SIZE		((int)RLC_BN_DIGS)
+#define BN_SIZE		((int)BN_DIGS)
 #endif
 
 /**
  * Positive sign of a multiple precision integer.
  */
-#define RLC_POS		0
+#define BN_POS		0
 
 /**
  * Negative sign of a multiple precision integer.
  */
-#define RLC_NEG		1
+#define BN_NEG		1
 
 /*============================================================================*/
 /* Type definitions                                                           */
@@ -104,7 +104,7 @@ typedef struct {
 	dig_t *dp;
 #elif ALLOC == STACK || ALLOC == AUTO
 	/** The sequence of contiguous digits that forms this integer. */
-	rlc_align dig_t dp[RLC_BN_SIZE];
+	relic_align dig_t dp[BN_SIZE];
 #endif
 } bn_st;
 
@@ -144,16 +144,16 @@ typedef bn_st *bn_t;
 	if ((A) == NULL) {														\
 		THROW(ERR_NO_MEMORY);												\
 	}																		\
-	bn_init(A, RLC_BN_SIZE);													\
+	bn_init(A, BN_SIZE);													\
 
 #elif ALLOC == AUTO
 #define bn_new(A)															\
-	bn_init(A, RLC_BN_SIZE);													\
+	bn_init(A, BN_SIZE);													\
 
 #elif ALLOC == STACK
 #define bn_new(A)															\
 	A = (bn_t)alloca(sizeof(bn_st));										\
-	bn_init(A, RLC_BN_SIZE);													\
+	bn_init(A, BN_SIZE);													\
 
 #endif
 
@@ -268,7 +268,7 @@ typedef bn_st *bn_t;
  * @param[in] A				- the multiple precision integer to reduce.
  * @param[in] ...			- the modulus and an optional argument.
  */
-#define bn_mod(C, A, ...)	RLC_CAT(bn_mod, RLC_OPT(__VA_ARGS__))(C, A, __VA_ARGS__)
+#define bn_mod(C, A, ...)	CAT(bn_mod, OPT(__VA_ARGS__))(C, A, __VA_ARGS__)
 
 /**
  * Reduces a multiple precision integer modulo another integer. This macro
@@ -440,7 +440,7 @@ void bn_neg(bn_t c, const bn_t a);
  * Returns the sign of a multiple precision integer.
  *
  * @param[in] a				- the multiple precision integer.
- * @return RLC_POS if the argument is positive and RLC_NEG otherwise.
+ * @return BN_POS if the argument is positive and BN_NEG otherwise.
  */
 int bn_sign(const bn_t a);
 
@@ -513,7 +513,7 @@ void bn_get_dig(dig_t *digit, const bn_t a);
  * Assigns a small positive constant to a multiple precision integer.
  *
  * The constant must fit on a multiple precision digit, or dig_t type using
- * only the number of bits specified on RLC_DIG.
+ * only the number of bits specified on DIGIT.
  *
  * @param[out] a			- the result.
  * @param[in] digit			- the constant to assign.
@@ -532,7 +532,7 @@ void bn_set_2b(bn_t a, int b);
  * Assigns a random value to a multiple precision integer.
  *
  * @param[out] a			- the multiple precision integer to assign.
- * @param[in] sign			- the sign to be assigned (RLC_NEG or RLC_POS).
+ * @param[in] sign			- the sign to be assigned (BN_NEG or BN_POS).
  * @param[in] bits			- the number of bits.
  */
 void bn_rand(bn_t a, int sign, int bits);
@@ -651,7 +651,7 @@ void bn_write_raw(dig_t *raw, int len, const bn_t a);
  *
  * @param[in] a				- the first multiple precision integer.
  * @param[in] b				- the second multiple precision integer.
- * @return RLC_LT if a < b, RLC_EQ if a == b and RLC_GT if a > b.
+ * @return CMP_LT if a < b, CMP_EQ if a == b and CMP_GT if a > b.
  */
 int bn_cmp_abs(const bn_t a, const bn_t b);
 
@@ -661,7 +661,7 @@ int bn_cmp_abs(const bn_t a, const bn_t b);
  *
  * @param[in] a				- the multiple precision integer.
  * @param[in] b				- the digit.
- * @return RLC_LT if a < b, RLC_EQ if a == b and RLC_GT if a > b.
+ * @return CMP_LT if a < b, CMP_EQ if a == b and CMP_GT if a > b.
  */
 int bn_cmp_dig(const bn_t a, dig_t b);
 
@@ -671,7 +671,7 @@ int bn_cmp_dig(const bn_t a, dig_t b);
  *
  * @param[in] a				- the first multiple precision integer.
  * @param[in] b				- the second multiple precision integer.
- * @return RLC_LT if a < b, RLC_EQ if a == b and RLC_GT if a > b.
+ * @return CMP_LT if a < b, CMP_EQ if a == b and CMP_GT if a > b.
  */
 int bn_cmp(const bn_t a, const bn_t b);
 
@@ -1374,4 +1374,4 @@ void bn_rec_jsf(int8_t *jsf, int *len, const bn_t k, const bn_t l);
 void bn_rec_glv(bn_t k0, bn_t k1, const bn_t k, const bn_t n, const bn_t v1[],
 		const bn_t v2[]);
 
-#endif /* !RLC_BN_H */
+#endif /* !RELIC_BN_H */

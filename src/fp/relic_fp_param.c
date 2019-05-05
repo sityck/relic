@@ -122,13 +122,6 @@ void fp_param_get_var(bn_t x) {
 				bn_add_dig(x, x, 1);
 				bn_neg(x, x);
 				break;
-			case BN_446:
-				/* x = 2^110 + 2^36 + 1. */
-				bn_set_2b(x, 110);
-				bn_set_2b(a, 36);
-				bn_add(x, x, a);
-				bn_add_dig(x, x, 1);
-				break;
 			case B12_455:
 				/* x = 2^76 + 2^53 + 2^31 + 2^11. */
 				bn_set_2b(x, 76);
@@ -206,7 +199,7 @@ void fp_param_get_sps(int *s, int *len) {
 
 	bn_null(a);
 
-	if (*len < RLC_TERMS) {
+	if (*len < MAX_TERMS) {
 		THROW(ERR_NO_BUFFER);
 	}
 
@@ -220,9 +213,8 @@ void fp_param_get_sps(int *s, int *len) {
 			case BN_254:
 			case BN_256:
 			case BN_382:
-			case BN_446:
 				fp_param_get_var(a);
-				if (bn_sign(a) == RLC_NEG) {
+				if (bn_sign(a) == BN_NEG) {
 					bn_neg(a, a);
 				}
 				*len = bn_ham(a);
@@ -296,11 +288,11 @@ void fp_param_get_sps(int *s, int *len) {
 }
 
 void fp_param_get_map(int *s, int *len) {
-	if (*len < RLC_FP_BITS) {
+	if (*len < FP_BITS) {
 		THROW(ERR_NO_BUFFER);
 	}
 
-	for (int i = 0; i < RLC_FP_BITS; i++) {
+	for (int i = 0; i < FP_BITS; i++) {
 		s[i] = 0;
 	}
 
@@ -322,9 +314,9 @@ void fp_param_get_map(int *s, int *len) {
 			s[69] = s[79] = s[80] = s[95] = s[96] = 1;
 			*len = 97;
 			break;
-		case BN_446:
-			s[3] = s[37] = s[38] = s[111] = s[112] = 1;
-			*len = 113;
+		case B12_381:
+			s[16] = s[48] = s[57] = s[60] = s[62] = s[63] = 1;
+			*len = 64;
 			break;
 		case B12_455:
 			s[11] = s[31] = s[53] = s[76] = 1;
@@ -614,26 +606,6 @@ void fp_param_set(int param) {
 				f[4] = 384;
 				fp_prime_set_pmers(f, 5);
 				break;
-#elif FP_PRIME == 446
-			case BN_446:
-				fp_param_get_var(t0);
-				/* p = 36 * x^4 + 36 * x^3 + 24 * x^2 + 6 * x + 1. */
-				bn_set_dig(p, 1);
-				bn_mul_dig(t1, t0, 6);
-				bn_add(p, p, t1);
-				bn_mul(t1, t0, t0);
-				bn_mul_dig(t1, t1, 24);
-				bn_add(p, p, t1);
-				bn_mul(t1, t0, t0);
-				bn_mul(t1, t1, t0);
-				bn_mul_dig(t1, t1, 36);
-				bn_add(p, p, t1);
-				bn_mul(t0, t0, t0);
-				bn_mul(t1, t0, t0);
-				bn_mul_dig(t1, t1, 36);
-				bn_add(p, p, t1);
-				fp_prime_set_dense(p);
-				break;
 #elif FP_PRIME == 455
 			case B12_455:
 				fp_param_get_var(t0);
@@ -807,8 +779,6 @@ int fp_param_set_any(void) {
 	fp_param_set(PRIME_383187);
 #elif FP_PRIME == 384
 	fp_param_set(NIST_384);
-#elif FP_PRIME == 446
-	fp_param_set(BN_446);
 #elif FP_PRIME == 455
 	fp_param_set(B12_455);
 #elif FP_PRIME == 477
@@ -826,12 +796,12 @@ int fp_param_set_any(void) {
 #else
 	return fp_param_set_any_dense();
 #endif
-	return RLC_OK;
+	return STS_OK;
 }
 
 int fp_param_set_any_dense(void) {
 	bn_t p;
-	int result = RLC_OK;
+	int result = STS_OK;
 
 	bn_null(p);
 
@@ -839,13 +809,13 @@ int fp_param_set_any_dense(void) {
 		bn_new(p);
 #ifdef FP_QNRES
 		do {
-			bn_gen_prime(p, RLC_FP_BITS);
+			bn_gen_prime(p, FP_BITS);
 		} while ((p->dp[0] & 0x7) != 3);
 #else
-		bn_gen_prime(p, RLC_FP_BITS);
+		bn_gen_prime(p, FP_BITS);
 #endif
 		if (!bn_is_prime(p)) {
-			result = RLC_ERR;
+			result = STS_ERR;
 		} else {
 			fp_prime_set_dense(p);
 		}
@@ -873,9 +843,9 @@ int fp_param_set_any_pmers(void) {
 #elif FP_PRIME == 521
 	fp_param_set(NIST_521);
 #else
-	return RLC_ERR;
+	return STS_ERR;
 #endif
-	return RLC_OK;
+	return STS_OK;
 }
 
 int fp_param_set_any_tower(void) {
@@ -889,8 +859,6 @@ int fp_param_set_any_tower(void) {
 	fp_param_set(B12_381);
 #elif FP_PRIME == 382
 	fp_param_set(BN_382);
-#elif FP_PRIME == 446
-	fp_param_set(BN_446);
 #elif FP_PRIME == 455
 	fp_param_set(B12_455);
 #elif FP_PRIME == 477
@@ -898,7 +866,7 @@ int fp_param_set_any_tower(void) {
 #elif FP_PRIME == 508
 	fp_param_set(KSS_508);
 #elif FP_PRIME == 638
-	fp_param_set(BN_638);
+	fp_param_set(B12_638);
 #elif FP_PRIME == 1536
 	fp_param_set(SS_1536);
 #else
@@ -908,7 +876,7 @@ int fp_param_set_any_tower(void) {
 	} while (fp_prime_get_mod8() == 1 || fp_prime_get_mod8() == 5);
 #endif
 
-	return RLC_OK;
+	return STS_OK;
 }
 
 void fp_param_print(void) {

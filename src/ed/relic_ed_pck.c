@@ -32,6 +32,29 @@
 #include "relic_core.h"
 
 /*============================================================================*/
+/* Private definitions                                                        */
+/*============================================================================*/
+
+static void ed_recover_x(fp_t x, const fp_t y, const fp_t d, const fp_t a) {
+	fp_t tmpFP1;
+
+	fp_null(tmpFP1);
+	fp_new(tmpFP1);
+
+	// x = +/- sqrt((y^2 - 1) / (dy^2 - a))
+	fp_sqr(x, y);
+	fp_copy(tmpFP1, x);
+	fp_sub_dig(x, x, 1);
+	fp_mul(tmpFP1, tmpFP1, d);
+	fp_sub(tmpFP1, tmpFP1, a);
+	fp_inv(tmpFP1, tmpFP1);
+	fp_mul(x, x, tmpFP1);
+	fp_srt(x, x);
+
+	fp_free(tmpFP1);
+}
+
+/*============================================================================*/
 /* Public definitions                                                         */
 /*============================================================================*/
 
@@ -46,34 +69,23 @@ void ed_pck(ed_t r, const ed_t p) {
 
 int ed_upk(ed_t r, const ed_t p) {
 	int result = 1;
-	fp_t t, u;
-
-	fp_null(t);
-	fp_null(u);
+	fp_t t;
 
 	TRY {
 		fp_new(t);
-		fp_new(u);
 
 		fp_copy(r->y, p->y);
+		ed_recover_x(t, p->y, core_get()->ed_d, core_get()->ed_a);
 
-		/* x = +/- sqrt((y^2 - 1) / (dy^2 - a)). */
-		fp_sqr(t, p->y);
-		fp_sub_dig(u, t, 1);
-		fp_mul(t, t, core_get()->ed_d);
-		fp_sub(t, t, core_get()->ed_a);
-		fp_inv(t, t);
-		fp_mul(u, u, t);
-		fp_srt(u, u);
-
-		if (fp_get_bit(u, 0) != fp_get_bit(p->x, 0)) {
-			fp_neg(u, u);
+		if (fp_get_bit(t, 0) != fp_get_bit(p->x, 0)) {
+			fp_neg(t, t);
 		}
-		fp_copy(r->x, u);
+		fp_copy(r->x, t);
 
 #if ED_ADD == EXTND
 		fp_mul(r->t, r->x, r->y);
 #endif
+
 		fp_set_dig(r->z, 1);
 		r->norm = 1;
 	}

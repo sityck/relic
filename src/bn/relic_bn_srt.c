@@ -40,7 +40,7 @@ void bn_srt(bn_t c, bn_t a) {
 	bn_t h, l, m, t;
 	int bits, cmp;
 
-	if (bn_sign(a) == RLC_NEG) {
+	if (bn_sign(a) == BN_NEG) {
 		THROW(ERR_NO_VALID);
 	}
 
@@ -68,13 +68,13 @@ void bn_srt(bn_t c, bn_t a) {
 			bn_sqr(t, m);
 			cmp = bn_cmp(t, a);
 
-			if (cmp == RLC_GT) {
+			if (cmp == CMP_GT) {
 				bn_copy(h, m);
-			} else if (cmp == RLC_LT) {
+			} else if (cmp == CMP_LT) {
 				bn_copy(l, m);
 			}
 			bn_sub(t, h, l);
-		} while (bn_cmp_dig(t, 1) == RLC_GT && cmp != RLC_EQ);
+		} while (bn_cmp_dig(t, 1) == CMP_GT && cmp != CMP_EQ);
 
 		bn_copy(c, m);
 	}

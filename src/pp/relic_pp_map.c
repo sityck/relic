@@ -838,7 +838,7 @@ void pp_map_oatep_k12(fp12_t r, ep_t p, ep2_t q) {
 	ep_t _p[1];
 	ep2_t t[1], _q[1];
 	bn_t a;
-	int len = RLC_FP_BITS, s[RLC_FP_BITS];
+	int len = FP_BITS, s[FP_BITS];
 
 	ep_null(_p[0]);
 	ep2_null(_q[0]);
@@ -866,11 +866,10 @@ void pp_map_oatep_k12(fp12_t r, ep_t p, ep2_t q) {
 				case BN_P254:
 				case BN_P256:
 				case BN_P382:
-				case BN_P446:
 				case BN_P638:
 					/* r = f_{|a|,Q}(P). */
 					pp_mil_sps_k12(r, t, _q, _p, 1, s, len);
-					if (bn_sign(a) == RLC_NEG) {
+					if (bn_sign(a) == BN_NEG) {
 						/* f_{-a,Q}(P) = 1/f_{a,Q}(P). */
 						fp12_inv_uni(r, r);
 						ep2_neg(t[0], t[0]);
@@ -883,7 +882,7 @@ void pp_map_oatep_k12(fp12_t r, ep_t p, ep2_t q) {
 				case B12_P638:
 					/* r = f_{|a|,Q}(P). */
 					pp_mil_sps_k12(r, t, _q, _p, 1, s, len);
-					if (bn_sign(a) == RLC_NEG) {
+					if (bn_sign(a) == BN_NEG) {
 						fp12_inv_uni(r, r);
 						ep2_neg(t[0], t[0]);
 					}
@@ -907,7 +906,7 @@ void pp_map_sim_oatep_k12(fp12_t r, ep_t *p, ep2_t *q, int m) {
 	ep_t _p[m];
 	ep2_t t[m], _q[m];
 	bn_t a;
-	int i, j, len = RLC_FP_BITS, s[RLC_FP_BITS];
+	int i, j, len = FP_BITS, s[FP_BITS];
 
 	TRY {
 		bn_null(a);
@@ -941,16 +940,15 @@ void pp_map_sim_oatep_k12(fp12_t r, ep_t *p, ep2_t *q, int m) {
 				case BN_P254:
 				case BN_P256:
 				case BN_P382:
-				case BN_P446:
 				case BN_P638:
 					/* r = f_{|a|,Q}(P). */
 					pp_mil_sps_k12(r, t, _q, _p, j, s, len);
-					if (bn_sign(a) == RLC_NEG) {
+					if (bn_sign(a) == BN_NEG) {
 						/* f_{-a,Q}(P) = 1/f_{a,Q}(P). */
 						fp12_inv_uni(r, r);
 					}
 					for (i = 0; i < j; i++) {
-						if (bn_sign(a) == RLC_NEG) {
+						if (bn_sign(a) == BN_NEG) {
 							ep2_neg(t[i], t[i]);
 						}
 						pp_fin_k12_oatep(r, t[i], _q[i], _p[i]);
@@ -962,7 +960,7 @@ void pp_map_sim_oatep_k12(fp12_t r, ep_t *p, ep2_t *q, int m) {
 				case B12_P638:
 					/* r = f_{|a|,Q}(P). */
 					pp_mil_sps_k12(r, t, _q, _p, j, s, len);
-					if (bn_sign(a) == RLC_NEG) {
+					if (bn_sign(a) == BN_NEG) {
 						fp12_inv_uni(r, r);
 					}
 					pp_exp_k12(r, r);

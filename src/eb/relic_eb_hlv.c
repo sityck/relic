@@ -50,13 +50,13 @@ void eb_hlv(eb_t r, const eb_t p) {
 
 		/* Solve l^2 + l = u + a. */
 		switch (eb_curve_opt_a()) {
-			case RLC_ZERO:
+			case OPT_ZERO:
 				fb_copy(t, p->x);
 				break;
-			case RLC_ONE:
+			case OPT_ONE:
 				fb_add_dig(t, p->x, (dig_t)1);
 				break;
-			case RLC_TINY:
+			case OPT_DIGIT:
 				fb_add_dig(t, p->x, eb_curve_get_a()[0]);
 				break;
 			default:

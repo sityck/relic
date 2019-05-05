@@ -37,6 +37,9 @@
 /* Public definitions                                                         */
 /*============================================================================*/
 
+/* Square root of -1 mod p. */
+#define SRTM1 "2B8324804FC1DF0B2B4D00993DFBD7A72F431806AD2FE478C4EE1B274A0EA0B0"
+
 void ed_map(ed_t p, const uint8_t *msg, int len) {
 	bn_t h;
 	fp_t t, u, v;
@@ -54,14 +57,14 @@ void ed_map(ed_t p, const uint8_t *msg, int len) {
 		fp_new(v);
 
 		md_map(digest, msg, len);
-		bn_read_bin(h, digest, RLC_MIN(RLC_FP_BYTES, MD_LEN));
+		bn_read_bin(h, digest, MIN(FP_BYTES, MD_LEN));
 
 		fp_prime_conv(p->y, h);
 		fp_set_dig(p->z, 1);
 
 		/* Make e = p. */
-		h->used = RLC_FP_DIGS;
-		dv_copy(h->dp, fp_prime_get(), RLC_FP_DIGS);
+		h->used = FP_DIGS;
+		dv_copy(h->dp, fp_prime_get(), FP_DIGS);
 
 		/* Compute a^((p - 5)/8). */
 		bn_sub_dig(h, h, 5);
@@ -91,13 +94,14 @@ void ed_map(ed_t p, const uint8_t *msg, int len) {
 			fp_sqr(t, p->x);
 			fp_mul(t, t, v);
 
-			if (fp_cmp(t, u) != RLC_EQ) {
+			if (fp_cmp(t, u) != CMP_EQ) {
 				fp_neg(u, u);
 				/* Check if vx^2 == -u. */
-				if (fp_cmp(t, u) != RLC_EQ) {
+				if (fp_cmp(t, u) != CMP_EQ) {
 					fp_add_dig(p->y, p->y, 1);
 				} else {
-					fp_mul(p->x, p->x, core_get()->srm1);
+					fp_read_str(t, SRTM1, strlen(SRTM1), 16);
+					fp_mul(p->x, p->x, t);
 					break;
 				}
 			} else {
@@ -106,7 +110,7 @@ void ed_map(ed_t p, const uint8_t *msg, int len) {
 		}
 
 		/* By Elligator convention. */
-		if (p->x[RLC_FP_DIGS - 1] >> (RLC_DIG - 1) == 1) {
+		if (p->x[FP_DIGS - 1] >> (DIGIT - 1) == 1) {
 			fp_neg(p->x, p->x);
 		}
 

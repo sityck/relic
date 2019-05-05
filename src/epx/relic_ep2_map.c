@@ -164,7 +164,7 @@ void ep2_map(ep2_t p, const uint8_t *msg, int len) {
 		fp2_new(t0);
 
 		md_map(digest, msg, len);
-		bn_read_bin(x, digest, RLC_MIN(RLC_FP_BYTES, MD_LEN));
+		bn_read_bin(x, digest, MIN(FP_BYTES, MD_LEN));
 
 		fp_prime_conv(p->x[0], x);
 		fp_zero(p->x[1]);
@@ -187,7 +187,6 @@ void ep2_map(ep2_t p, const uint8_t *msg, int len) {
 			case BN_P254:
 			case BN_P256:
 			case BN_P382:
-			case BN_P446:
 			case BN_P638:
 				ep2_mul_cof_bn(p, p);
 				break;
@@ -199,9 +198,9 @@ void ep2_map(ep2_t p, const uint8_t *msg, int len) {
 			default:
 				/* Now, multiply by cofactor to get the correct group. */
 				ep2_curve_get_cof(x);
-				if (bn_bits(x) < RLC_DIG) {
+				if (bn_bits(x) < DIGIT) {
 					ep2_mul_dig(p, p, x->dp[0]);
-					if (bn_sign(x) == RLC_NEG) {
+					if (bn_sign(x) == BN_NEG) {
 						ep2_neg(p, p);
 					}
 				} else {

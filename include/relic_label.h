@@ -29,8 +29,8 @@
  * @ingroup core
  */
 
-#ifndef RLC_LABEL_H
-#define RLC_LABEL_H
+#ifndef RELIC_LABEL_H
+#define RELIC_LABEL_H
 
 #include "relic_conf.h"
 
@@ -112,6 +112,12 @@
 
 #define test_fail 	PREFIX(test_fail)
 #define test_pass 	PREFIX(test_pass)
+
+#undef trace_enter
+#undef trace_exit
+
+#define trace_enter 	PREFIX(trace_enter)
+#define trace_exit 	PREFIX(trace_exit)
 
 #undef util_conv_endian
 #undef util_conv_big
@@ -1017,22 +1023,15 @@
 #undef ed_param_level
 #undef ed_projc_to_extnd
 #undef ed_rand
-#undef ed_rhs
 #undef ed_copy
 #undef ed_cmp
 #undef ed_set_infty
 #undef ed_is_infty
-#undef ed_neg_basic
-#undef ed_neg_projc
-#undef ed_add_basic
-#undef ed_add_projc
-#undef ed_add_extnd
-#undef ed_sub_basic
-#undef ed_sub_projc
-#undef ed_sub_extnd
-#undef ed_dbl_basic
-#undef ed_dbl_projc
-#undef ed_dbl_extnd
+#undef ed_neg
+#undef ed_add
+#undef ed_sub
+#undef ed_dbl
+#undef ed_dbl_short
 #undef ed_norm
 #undef ed_norm_sim
 #undef ed_map
@@ -1085,22 +1084,15 @@
 #define ed_param_level 	PREFIX(ed_param_level)
 #define ed_projc_to_extnd 	PREFIX(ed_projc_to_extnd)
 #define ed_rand 	PREFIX(ed_rand)
-#define ed_rhs 	PREFIX(ed_rhs)
 #define ed_copy 	PREFIX(ed_copy)
 #define ed_cmp 	PREFIX(ed_cmp)
 #define ed_set_infty 	PREFIX(ed_set_infty)
 #define ed_is_infty 	PREFIX(ed_is_infty)
-#define ed_neg_basic 	PREFIX(ed_neg_basic)
-#define ed_neg_projc 	PREFIX(ed_neg_projc)
-#define ed_add_basic 	PREFIX(ed_add_basic)
-#define ed_add_projc 	PREFIX(ed_add_projc)
-#define ed_add_extnd 	PREFIX(ed_add_extnd)
-#define ed_sub_basic 	PREFIX(ed_sub_basic)
-#define ed_sub_projc 	PREFIX(ed_sub_projc)
-#define ed_sub_extnd 	PREFIX(ed_sub_extnd)
-#define ed_dbl_basic 	PREFIX(ed_dbl_basic)
-#define ed_dbl_projc 	PREFIX(ed_dbl_projc)
-#define ed_dbl_extnd 	PREFIX(ed_dbl_extnd)
+#define ed_neg 	PREFIX(ed_neg)
+#define ed_add 	PREFIX(ed_add)
+#define ed_sub 	PREFIX(ed_sub)
+#define ed_dbl 	PREFIX(ed_dbl)
+#define ed_dbl_short 	PREFIX(ed_dbl_short)
 #define ed_norm 	PREFIX(ed_norm)
 #define ed_norm_sim 	PREFIX(ed_norm_sim)
 #define ed_map 	PREFIX(ed_map)
@@ -1294,7 +1286,7 @@
 #undef ep2_st
 #undef ep2_t
 #define ep2_st	PREFIX(ep2_st)
-#define ep2_t	PREFIX(ep2_t)
+#define ep2_t		PREFIX(ep2_t)
 
 #undef ep2_curve_init
 #undef ep2_curve_clean
@@ -1982,15 +1974,6 @@
 #undef cp_cli_gen
 #undef cp_cli_sig
 #undef cp_cli_ver
-#undef cp_clb_gen
-#undef cp_clb_sig
-#undef cp_clb_ver
-#undef cp_pss_gen
-#undef cp_pss_sig
-#undef cp_pss_ver
-#undef cp_psb_gen
-#undef cp_psb_sig
-#undef cp_psb_ver
 #undef cp_zss_gen
 #undef cp_zss_sig
 #undef cp_zss_ver
@@ -2056,15 +2039,6 @@
 #define cp_cli_gen 	PREFIX(cp_cli_gen)
 #define cp_cli_sig 	PREFIX(cp_cli_sig)
 #define cp_cli_ver 	PREFIX(cp_cli_ver)
-#define cp_clb_gen 	PREFIX(cp_clb_gen)
-#define cp_clb_sig 	PREFIX(cp_clb_sig)
-#define cp_clb_ver 	PREFIX(cp_clb_ver)
-#define cp_pss_gen 	PREFIX(cp_pss_gen)
-#define cp_pss_sig 	PREFIX(cp_pss_sig)
-#define cp_pss_ver 	PREFIX(cp_pss_ver)
-#define cp_psb_gen 	PREFIX(cp_psb_gen)
-#define cp_psb_sig 	PREFIX(cp_psb_sig)
-#define cp_psb_ver 	PREFIX(cp_psb_ver)
 #define cp_zss_gen 	PREFIX(cp_zss_gen)
 #define cp_zss_sig 	PREFIX(cp_zss_sig)
 #define cp_zss_ver 	PREFIX(cp_zss_ver)
@@ -2075,4 +2049,4 @@
 
 #endif /* LABEL */
 
-#endif /* !RLC_LABEL_H */
+#endif /* !RELIC_LABEL_H */

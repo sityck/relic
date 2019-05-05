@@ -24,7 +24,7 @@
 /**
  * @file
  *
- * Implementation of point normalization on binary elliptic curves.
+ * Implementation of the point normalization on binary elliptic curves.
  *
  * @ingroup eb
  */
@@ -45,11 +45,11 @@
  *
  * @param[out] r		- the result.
  * @param[in] p			- the point to normalize.
- * @param[in] inverted	- if the Z coordinate is already inverted.
+ * @param[in] flag		- if the Z coordinate is already inverted.
  */
-static void eb_norm_imp(eb_t r, const eb_t p, int inverted) {
+static void eb_norm_imp(eb_t r, const eb_t p, int flag) {
 	if (!p->norm) {
-		if (inverted) {
+		if (flag) {
 			fb_copy(r->z, p->z);
 		} else {
 			fb_inv(r->z, p->z);
@@ -89,7 +89,7 @@ void eb_norm(eb_t r, const eb_t p) {
 	}
 
 	if (p->norm == 1) {
-		/* If the point is represented in affine coordinates, just copy it. */
+		/* If the point is represented in affine coordinates, we just copy it. */
 		eb_copy(r, p);
 		return;
 	}
@@ -105,6 +105,7 @@ void eb_norm(eb_t r, const eb_t p) {
 }
 
 void eb_norm_sim(eb_t *r, const eb_t *t, int n) {
+	int i;
 	fb_t a[n];
 
 	if (n == 1) {
@@ -112,12 +113,12 @@ void eb_norm_sim(eb_t *r, const eb_t *t, int n) {
 		return;
 	}
 
-	for (int i = 0; i < n; i++) {
+	for (i = 0; i < n; i++) {
 		fb_null(a[i]);
 	}
 
 	TRY {
-		for (int i = 0; i < n; i++) {
+		for (i = 0; i < n; i++) {
 			fb_new(a[i]);
 			if (!eb_is_infty(t[i])) {
 				fb_copy(a[i], t[i]->z);
@@ -128,24 +129,24 @@ void eb_norm_sim(eb_t *r, const eb_t *t, int n) {
 
 		fb_inv_sim(a, (const fb_t *)a, n);
 
-		for (int i = 0; i < n; i++) {
+		for (i = 0; i < n; i++) {
 			fb_copy(r[i]->x, t[i]->x);
 			fb_copy(r[i]->y, t[i]->y);
 			if (!eb_is_infty(t[i])) {
 				fb_copy(r[i]->z, a[i]);
 			}
 		}
-
-		for (int i = 0; i < n; i++) {
-			eb_norm_imp(r[i], r[i], 1);
-		}
 	}
 	CATCH_ANY {
 		THROW(ERR_CAUGHT);
 	}
 	FINALLY {
-		for (int i = 0; i < n; i++) {
+		for (i = 0; i < n; i++) {
 			fb_free(a[i]);
 		}
+	}
+
+	for (i = 0; i < n; i++) {
+		eb_norm_imp(r[i], r[i], 1);
 	}
 }

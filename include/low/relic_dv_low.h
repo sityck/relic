@@ -67,14 +67,14 @@
  * result in any finite field.
  */
 #if DV_FB > DV_FP
-#define RLC_DV_DIGS		DV_FB
+#define DV_DIGS	DV_FB
 #else
-#define RLC_DV_DIGS		DV_FP
+#define DV_DIGS	DV_FP
 #endif
 
-#if RLC_BN_SIZE > DV_DIGS
-#undef RLC_DV_DIGS
-#define RLC_DV_DIGS 	RLC_BN_SIZE
+#if BN_SIZE > DV_DIGS
+#undef DV_DIGS
+#define DV_DIGS BN_SIZE
 #endif
 
 #endif /* ASM */

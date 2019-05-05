@@ -103,7 +103,7 @@ cdecl(fp2_sqrm_low):
 	FP_RDCN_LOW %rdi, %rsp
 
 	FP_MULN_LOW %rsp, %r12, %r13, %r14, 64(%rsp), 72(%rsp), 80(%rsp), 88(%rsp), 32(%rsi), 40(%rsi), 48(%rsi), 56(%rsi)
-	addq	$(8 * RLC_FP_DIGS), %rdi
+	addq	$(8 * FP_DIGS), %rdi
 	FP_RDCN_LOW %rdi, %rsp
 
 	addq $96, %rsp
@@ -181,7 +181,7 @@ cdecl(fp2_sqrn_low):
 	adcq	%r11, %r11
 	movq	%r11, 88(%rsp)
 
-	addq	$(8*RLC_DV_DIGS), %rdi
+	addq	$(8*DV_DIGS), %rdi
 	FP_MULN_LOW %rdi, %r12, %r13, %r14, 64(%rsp), 72(%rsp), 80(%rsp), 88(%rsp), 32(%rsi), 40(%rsi), 48(%rsi), 56(%rsi)
 
 	addq $96, %rsp

@@ -86,12 +86,12 @@ static void eb_add_basic_imp(eb_t r, const eb_t p, const eb_t q) {
 			fb_add(t2, t2, t1);
 
 			switch (eb_curve_opt_a()) {
-				case RLC_ZERO:
+				case OPT_ZERO:
 					break;
-				case RLC_ONE:
+				case OPT_ONE:
 					fb_add_dig(t2, t2, (dig_t)1);
 					break;
-				case RLC_TINY:
+				case OPT_DIGIT:
 					fb_add_dig(t2, t2, eb_curve_get_a()[0]);
 					break;
 				default:
@@ -210,12 +210,12 @@ static void eb_add_projc_mix(eb_t r, const eb_t p, const eb_t q) {
 
 			/* t1 = A + B^2 + a2 * C. */
 			switch (eb_curve_opt_a()) {
-				case RLC_ZERO:
+				case OPT_ZERO:
 					break;
-				case RLC_ONE:
+				case OPT_ONE:
 					fb_add(t1, t1, t2);
 					break;
-				case RLC_TINY:
+				case OPT_DIGIT:
 					/* t5 = a2 * C. */
 					fb_mul_dig(t5, t2, eb_curve_get_a()[0]);
 					fb_add(t1, t1, t5);

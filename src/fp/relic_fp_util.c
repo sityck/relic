@@ -37,18 +37,21 @@
 /*============================================================================*/
 
 void fp_copy(fp_t c, const fp_t a) {
-	dv_copy(c, a, RLC_FP_DIGS);
+	for (int i = 0; i < FP_DIGS; i++) {
+		c[i] = a[i];
+	}
 }
 
 void fp_zero(fp_t a) {
-	dv_zero(a, RLC_FP_DIGS);
+	for (int i = 0; i < FP_DIGS; i++, a++)
+		*a = 0;
 }
 
 int fp_is_zero(const fp_t a) {
 	int i;
 	dig_t t = 0;
 
-	for (i = 0; i < RLC_FP_DIGS; i++) {
+	for (i = 0; i < FP_DIGS; i++) {
 		t |= a[i];
 	}
 
@@ -65,7 +68,7 @@ int fp_is_even(const fp_t a) {
 int fp_get_bit(const fp_t a, int bit) {
 	int d;
 
-	RLC_RIP(bit, d, bit);
+	SPLIT(bit, d, bit, DIG_LOG);
 
 	return (a[d] >> bit) & 1;
 }
@@ -74,7 +77,7 @@ void fp_set_bit(fp_t a, int bit, int value) {
 	int d;
 	dig_t mask;
 
-	RLC_RIP(bit, d, bit);
+	SPLIT(bit, d, bit, DIG_LOG);
 
 	mask = (dig_t)1 << bit;
 
@@ -86,14 +89,14 @@ void fp_set_bit(fp_t a, int bit, int value) {
 }
 
 int fp_bits(const fp_t a) {
-	int i = RLC_FP_DIGS - 1;
+	int i = FP_DIGS - 1;
 
 	while (i >= 0 && a[i] == 0) {
 		i--;
 	}
 
 	if (i > 0) {
-		return (i << RLC_DIG_LOG) + util_bits_dig(a[i]);
+		return (i << DIG_LOG) + util_bits_dig(a[i]);
 	} else {
 		return util_bits_dig(a[0]);
 	}
@@ -106,15 +109,15 @@ void fp_set_dig(fp_t c, dig_t a) {
 void fp_rand(fp_t a) {
 	int bits, digits;
 
-	rand_bytes((uint8_t *)a, RLC_FP_DIGS * sizeof(dig_t));
+	rand_bytes((uint8_t *)a, FP_DIGS * sizeof(dig_t));
 
-	RLC_RIP(bits, digits, RLC_FP_BITS);
+	SPLIT(bits, digits, FP_BITS, DIG_LOG);
 	if (bits > 0) {
 		dig_t mask = ((dig_t)1 << (dig_t)bits) - 1;
-		a[RLC_FP_DIGS - 1] &= mask;
+		a[FP_DIGS - 1] &= mask;
 	}
 
-	while (dv_cmp(a, fp_prime_get(), RLC_FP_DIGS) != RLC_LT) {
+	while (dv_cmp(a, fp_prime_get(), FP_DIGS) != CMP_LT) {
 		fp_subn_low(a, a, fp_prime_get());
 	}
 }
@@ -132,13 +135,13 @@ void fp_print(const fp_t a) {
 		if (a != fp_prime_get()) {
 			fp_prime_back(t, a);
 		} else {
-			bn_read_raw(t, a, RLC_FP_DIGS);
+			bn_read_raw(t, a, FP_DIGS);
 		}
 #else
-		bn_read_raw(t, a, RLC_FP_DIGS);
+		bn_read_raw(t, a, FP_DIGS);
 #endif
 
-		for (i = RLC_FP_DIGS - 1; i > 0; i--) {
+		for (i = FP_DIGS - 1; i > 0; i--) {
 			if (i >= t->used) {
 				util_print_dig(0, 1);
 			} else {
@@ -229,7 +232,7 @@ void fp_read_bin(fp_t a, const uint8_t *bin, int len) {
 
 	bn_null(t);
 
-	if (len != RLC_FP_BYTES) {
+	if (len != FP_BYTES) {
 		THROW(ERR_NO_BUFFER);
 	}
 
@@ -259,7 +262,7 @@ void fp_write_bin(uint8_t *bin, int len, const fp_t a) {
 
 	bn_null(t);
 
-	if (len != RLC_FP_BYTES) {
+	if (len != FP_BYTES) {
 		THROW(ERR_NO_BUFFER);
 	}
 

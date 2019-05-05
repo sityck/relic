@@ -24,7 +24,7 @@
 /**
  * @file
  *
- * Implementation of the binary elliptic curve parameters.
+ * Implementation of the binary elliptic curve utilities.
  *
  * @ingroup eb
  */
@@ -229,17 +229,17 @@
  */
 #define ASSIGN(CURVE, FIELD)												\
 	fb_param_set(FIELD);													\
-	RLC_GET(str, CURVE##_A, sizeof(CURVE##_A));								\
+	FETCH(str, CURVE##_A, sizeof(CURVE##_A));								\
 	fb_read_str(a, str, strlen(str), 16);									\
-	RLC_GET(str, CURVE##_B, sizeof(CURVE##_B));								\
+	FETCH(str, CURVE##_B, sizeof(CURVE##_B));								\
 	fb_read_str(b, str, strlen(str), 16);									\
-	RLC_GET(str, CURVE##_X, sizeof(CURVE##_X));								\
+	FETCH(str, CURVE##_X, sizeof(CURVE##_X));								\
 	fb_read_str(g->x, str, strlen(str), 16);								\
-	RLC_GET(str, CURVE##_Y, sizeof(CURVE##_Y));								\
+	FETCH(str, CURVE##_Y, sizeof(CURVE##_Y));								\
 	fb_read_str(g->y, str, strlen(str), 16);								\
-	RLC_GET(str, CURVE##_R, sizeof(CURVE##_R));								\
+	FETCH(str, CURVE##_R, sizeof(CURVE##_R));								\
 	bn_read_str(r, str, strlen(str), 16);									\
-	RLC_GET(str, CURVE##_H, sizeof(CURVE##_H));								\
+	FETCH(str, CURVE##_H, sizeof(CURVE##_H));								\
 	bn_read_str(h, str, strlen(str), 16);									\
 
 /*============================================================================*/
@@ -251,7 +251,7 @@ int eb_param_get(void) {
 }
 
 void eb_param_set(int param) {
-	char str[2 * RLC_FB_BYTES + 1];
+	char str[2 * FB_BYTES + 1];
 	fb_t a, b;
 	eb_t g;
 	bn_t r;
@@ -366,17 +366,17 @@ int eb_param_set_any(void) {
 	int r0, r1;
 
 	r0 = eb_param_set_any_plain();
-	if (r0 == RLC_ERR) {
+	if (r0 == STS_ERR) {
 		r1 = eb_param_set_any_kbltz();
-		if (r1 == RLC_ERR) {
-			return RLC_ERR;
+		if (r1 == STS_ERR) {
+			return STS_ERR;
 		}
 	}
-	return RLC_OK;
+	return STS_OK;
 }
 
 int eb_param_set_any_plain(void) {
-	int r = RLC_OK;
+	int r = STS_OK;
 #if defined(EB_PLAIN)
 #if FB_POLYN == 163
 	eb_param_set(NIST_B163);
@@ -393,16 +393,16 @@ int eb_param_set_any_plain(void) {
 #elif FB_POLYN == 571
 	eb_param_set(NIST_B571);
 #else
-	r = RLC_ERR;
+	r = STS_ERR;
 #endif
 #else
-	r = RLC_ERR;
+	r = STS_ERR;
 #endif
 	return r;
 }
 
 int eb_param_set_any_kbltz(void) {
-	int r = RLC_OK;
+	int r = STS_OK;
 #if defined(EB_KBLTZ)
 #if FB_POLYN == 163
 	eb_param_set(NIST_K163);
@@ -417,10 +417,10 @@ int eb_param_set_any_kbltz(void) {
 #elif FB_POLYN == 571
 	eb_param_set(NIST_K571);
 #else
-	r = RLC_ERR;
+	r = STS_ERR;
 #endif
 #else
-	r = RLC_ERR;
+	r = STS_ERR;
 #endif
 	return r;
 }

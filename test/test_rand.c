@@ -328,7 +328,7 @@ uint8_t result2[] = {
 #endif
 
 static int test(void) {
-	int i, len = 2 * MD_LEN, size = (RAND_SIZE - 1) / 2, code = RLC_ERR;
+	int i, len = 2 * MD_LEN, size = (RAND_SIZE - 1) / 2, code = STS_ERR;
 	uint8_t out[len], seed2[size], seed3[size];
 
 	for (i = 0; i < (RAND_SIZE - 1) / 2; i++) {
@@ -362,7 +362,7 @@ static int test(void) {
 	}
 	TEST_END;
 
-	code = RLC_OK;
+	code = STS_OK;
 
   end:
 	return code;
@@ -413,7 +413,7 @@ uint8_t result2[160] = {
 };
 
 static int test(void) {
-	int code = RLC_ERR;
+	int code = STS_ERR;
 	uint8_t out[160];
 
 	TEST_ONCE("fips 186-2 (cn1) random generator is correct") {
@@ -426,7 +426,7 @@ static int test(void) {
 	}
 	TEST_END;
 
-	code = RLC_OK;
+	code = STS_OK;
 
   end:
 	return code;
@@ -448,14 +448,14 @@ static int test(void) {
 	}
 	TEST_END;
   end:
-	return RLC_OK;
+	return STS_OK;
 }
 
 #elif RAND == RDRND
 
 static int test(void) {
 	uint8_t out[64];
-	int len = sizeof(out) / 2, code = RLC_ERR;
+	int len = sizeof(out) / 2, code = STS_ERR;
 
 	TEST_ONCE("rdrand hardware generator is non-trivial") {
 		memset(out, 0, 2 * len);
@@ -465,7 +465,7 @@ static int test(void) {
 	}
 	TEST_END;
 
-	code = RLC_OK;
+	code = STS_OK;
 
   end:
 	return code;
@@ -516,20 +516,20 @@ static int test(void) {
 	TEST_END;
   end:
   	close(fd);
-	return RLC_OK;
+	return STS_OK;
 }
 
 #endif
 
 int main(void) {
-	if (core_init() != RLC_OK) {
+	if (core_init() != STS_OK) {
 		core_clean();
 		return 1;
 	}
 
 	util_banner("Tests for the RAND module:\n", 0);
 
-	if (test() != RLC_OK) {
+	if (test() != STS_OK) {
 		core_clean();
 		return 1;
 	}

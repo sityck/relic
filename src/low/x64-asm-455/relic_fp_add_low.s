@@ -29,6 +29,7 @@
  * Implementation of the low-level prime field addition and subtraction
  * functions.
  *
+ * @version $Id: relic_fp_add_low.c 88 2009-09-06 21:27:19Z dfaranha $
  * @ingroup fp
  */
 
@@ -36,32 +37,14 @@
 
 .data
 
-p0: .quad P0
-p1: .quad P1
-p2: .quad P2
-p3: .quad P3
-p4: .quad P4
-p5: .quad P5
-p6: .quad P6
-p7: .quad P7
-
-.global p0
-.global p1
-.global p2
-.global p3
-.global p4
-.global p5
-.global p6
-.global p7
-
-.hidden p0
-.hidden p1
-.hidden p2
-.hidden p3
-.hidden p4
-.hidden p5
-.hidden p6
-.hidden p7
+p0: .quad 0xAAA00001800002AB
+p1: .quad 0xA6C589556B2AA956
+p2: .quad 0xB3DB9994ACE86D1B
+p3: .quad 0x4BD93954FCB314B8
+p4: .quad 0x3F665E3A5B1D5623
+p5: .quad 0xA00E0F95B4920300
+p6: .quad 0x555955557955572A
+p7: .quad 0x0000000000000055
 
 .text
 
@@ -86,7 +69,7 @@ fp_add1_low:
 	addq	%rdx   , %r10
 	movq	%r10   , 0(%rdi)
 
-	ADD1 1 (RLC_FP_DIGS - 1)
+	ADD1 1 (FP_DIGS - 1)
 
 	ret
 
@@ -95,7 +78,7 @@ fp_addn_low:
 	addq	0(%rsi), %r11
 	movq	%r11   , 0(%rdi)
 
-	ADDN 	1 (RLC_FP_DIGS - 1)
+	ADDN 	1 (FP_DIGS - 1)
 
 	xorq	%rax, %rax
 
@@ -138,14 +121,14 @@ fp_addm_low:
 	movq	%r15, 0(%rsp)
 	movq	%r15, 8(%rsp)
 
-	subq	p0(%rip), %rax
-	sbbq	p1(%rip), %rcx
-	sbbq	p2(%rip), %rdx
-	sbbq	p3(%rip), %rsi
-	sbbq	p4(%rip), %rbx
-	sbbq	p5(%rip), %rbp
-	sbbq	p6(%rip), %rdi
-	sbbq	p7(%rip), %r15
+	subq	p0, %rax
+	sbbq	p1, %rcx
+	sbbq	p2, %rdx
+	sbbq	p3, %rsi
+	sbbq	p4, %rbx
+	sbbq	p5, %rbp
+	sbbq	p6, %rdi
+	sbbq	p7, %r15
 	movq	%r15, 0(%rsp)
 
 	movq	8(%rsp), %r15
@@ -185,7 +168,7 @@ fp_addd_low:
 	addq	0(%rsi), %r11
 	movq	%r11   , 0(%rdi)
 
-	ADDN 	1 (2 * RLC_FP_DIGS - 1)
+	ADDN 	1 (2 * FP_DIGS - 1)
 
 	ret
 
@@ -203,7 +186,7 @@ fp_addc_low:
 	addq	0(%rdx), %r8
 	movq	%r8    , 0(%rdi)
 
-	ADDN	1 (RLC_FP_DIGS - 1)
+	ADDN	1 (FP_DIGS - 1)
 
 	movq     64(%rsi), %r8
 	adcq     64(%rdx), %r8
@@ -232,14 +215,14 @@ fp_addc_low:
 	movq	%r15, 0(%rsp)
 	movq	%r15, 8(%rsp)
 
-	subq	p0(%rip), %rax
-	sbbq	p1(%rip), %rcx
-	sbbq	p2(%rip), %rdx
-	sbbq	p3(%rip), %rsi
-	sbbq	p4(%rip), %rbx
-	sbbq	p5(%rip), %rbp
-	sbbq	p6(%rip), %rdi
-	sbbq	p7(%rip), %r15
+	subq	p0, %rax
+	sbbq	p1, %rcx
+	sbbq	p2, %rdx
+	sbbq	p3, %rsi
+	sbbq	p4, %rbx
+	sbbq	p5, %rbp
+	sbbq	p6, %rdi
+	sbbq	p7, %r15
 	movq	%r15, 0(%rsp)
 	mov		8(%rsp), %r15
 
@@ -278,7 +261,7 @@ fp_sub1_low:
 	subq	%rdx   , %r10
 	movq	%r10   , 0(%rdi)
 
-	SUB1 	1 (RLC_FP_DIGS - 1)
+	SUB1 	1 (FP_DIGS - 1)
 
 	ret
 
@@ -288,7 +271,7 @@ fp_subn_low:
 	subq	0(%rdx), %r11
 	movq	%r11   , 0(%rdi)
 
-	SUBN 1 (RLC_FP_DIGS - 1)
+	SUBN 1 (FP_DIGS - 1)
 
 	adcq	$0, %rax
 
@@ -302,7 +285,7 @@ fp_subm_low:
 	subq	0(%rdx), %r8
 	movq	%r8    , 0(%rdi)
 
-	SUBN	1 (RLC_FP_DIGS - 1)
+	SUBN	1 (FP_DIGS - 1)
 
 	movq	$0, %r8
 	movq	$0, %r9
@@ -311,14 +294,14 @@ fp_subm_low:
 	movq	$0, %rdx
 	movq	$0, %rsi
 
-	cmovc	p0(%rip), %rax
-	cmovc	p1(%rip), %rcx
-	cmovc	p2(%rip), %r8
-	cmovc	p3(%rip), %r9
-	cmovc	p4(%rip), %r10
-	cmovc	p5(%rip), %r11
-	cmovc	p6(%rip), %rdx
-	cmovc	p7(%rip), %rsi
+	cmovc	p0, %rax
+	cmovc	p1, %rcx
+	cmovc	p2, %r8
+	cmovc	p3, %r9
+	cmovc	p4, %r10
+	cmovc	p5, %r11
+	cmovc	p6, %rdx
+	cmovc	p7, %rsi
 
     addq	%rax,  0(%rdi)
     adcq	%rcx,  8(%rdi)
@@ -336,7 +319,7 @@ fp_subd_low:
 	subq	0(%rdx), %r8
 	movq	%r8, 0(%rdi)
 
-	SUBN 	1 (2 * RLC_FP_DIGS - 1)
+	SUBN 	1 (2 * FP_DIGS - 1)
 
 	ret
 
@@ -348,7 +331,7 @@ fp_subc_low:
 	subq    0(%rdx), %r8
 	movq    %r8,     0(%rdi)
 
-	SUBN 	1 (2 * RLC_FP_DIGS - 1)
+	SUBN 	1 (2 * FP_DIGS - 1)
 
 	movq	$0, %r8
 	movq	$0, %r9
@@ -357,14 +340,14 @@ fp_subc_low:
 	movq	$0, %rsi
 	movq	$0, %rdx
 
-	cmovc	p0(%rip), %rax
-	cmovc	p1(%rip), %rcx
-	cmovc	p2(%rip), %r8
-	cmovc	p3(%rip), %r9
-	cmovc	p4(%rip), %r10
-	cmovc	p5(%rip), %r11
-	cmovc	p6(%rip), %rsi
-	cmovc	p7(%rip), %rdx
+	cmovc	p0, %rax
+	cmovc	p1, %rcx
+	cmovc	p2, %r8
+	cmovc	p3, %r9
+	cmovc	p4, %r10
+	cmovc	p5, %r11
+	cmovc	p6, %rsi
+	cmovc	p7, %rdx
 
     addq	%rax,  64(%rdi)
     adcq	%rcx,  72(%rdi)
@@ -378,28 +361,28 @@ fp_subc_low:
 	ret
 
 fp_negm_low:
-	movq 	$P0      , %r8
+	movq 	P0      , %r8
 	subq 	0(%rsi) , %r8
 	movq 	%r8     , 0(%rdi)
-	movq 	$P1      , %r8
+	movq 	P1      , %r8
 	sbbq 	8(%rsi) , %r8
 	movq 	%r8     , 8(%rdi)
-	movq 	$P2      , %r8
+	movq 	P2      , %r8
 	sbbq 	16(%rsi), %r8
 	movq 	%r8     , 16(%rdi)
-	movq 	$P3      , %r8
+	movq 	P3      , %r8
 	sbbq 	24(%rsi), %r8
 	movq 	%r8     , 24(%rdi)
-	movq 	$P4      , %r8
+	movq 	P4      , %r8
 	sbbq 	32(%rsi), %r8
 	movq 	%r8     , 32(%rdi)
-	movq 	$P5      , %r8
+	movq 	P5      , %r8
 	sbbq 	40(%rsi), %r8
 	movq 	%r8     , 40(%rdi)
-	movq 	$P6      , %r8
+	movq 	P6      , %r8
 	sbbq 	48(%rsi), %r8
 	movq 	%r8     , 48(%rdi)
-	movq 	$P7      , %r8
+	movq 	P7      , %r8
 	sbbq 	56(%rsi), %r8
 	movq 	%r8     , 56(%rdi)
   	ret
@@ -409,7 +392,7 @@ fp_dbln_low:
 	addq	%r8    , %r8
 	movq	%r8    , 0(%rdi)
 
-	DBLN 1 (RLC_FP_DIGS - 1)
+	DBLN 1 (FP_DIGS - 1)
 
 	xorq	%rax,%rax
 	ret
@@ -455,14 +438,14 @@ fp_dblm_low:
 	movq	%r15, 0(%rsp)
 	movq	%r15, 8(%rsp)
 
-	subq	p0(%rip), %rax
-	sbbq	p1(%rip), %rcx
-	sbbq	p2(%rip), %rdx
-	sbbq	p3(%rip), %rsi
-	sbbq	p4(%rip), %rbx
-	sbbq	p5(%rip), %rbp
-	sbbq	p6(%rip), %rdi
-	sbbq	p7(%rip), %r15
+	subq	p0, %rax
+	sbbq	p1, %rcx
+	sbbq	p2, %rdx
+	sbbq	p3, %rsi
+	sbbq	p4, %rbx
+	sbbq	p5, %rbp
+	sbbq	p6, %rdi
+	sbbq	p7, %r15
 	movq	%r15, 0(%rsp)
 	movq	8(%rsp), %r15
 
@@ -504,14 +487,14 @@ fp_hlvm_low:
 
 	xorq	%rdx, %rdx
 
-	movq	$P0, %r8
-	movq	$P1, %r9
-	movq	$P2, %r10
-	movq	$P3, %r11
-	movq	$P4, %r12
-	movq	$P5, %r13
-	movq	$P6, %r14
-	movq	$P7, %r15
+	movq	P0, %r8
+	movq	P1, %r9
+	movq	P2, %r10
+	movq	P3, %r11
+	movq	P4, %r12
+	movq	P5, %r13
+	movq	P6, %r14
+	movq	P7, %r15
 
   	movq 	$1     ,%rax
   	movq 	0(%rsi),%rcx
@@ -579,14 +562,14 @@ fp_hlvd_low2:
 
 	xorq	%rdx, %rdx
 
-	movq	$P0, %r8
-	movq	$P1, %r9
-	movq	$P2, %r10
-	movq	$P3, %r11
-	movq	$P4, %r12
-	movq	$P5, %r13
-	movq	$P6, %r14
-	movq	$P7, %r15
+	movq	P0, %r8
+	movq	P1, %r9
+	movq	P2, %r10
+	movq	P3, %r11
+	movq	P4, %r12
+	movq	P5, %r13
+	movq	P6, %r14
+	movq	P7, %r15
 
   	movq 	$1     ,%rax
   	movq 	0(%rsi),%rcx
@@ -685,14 +668,14 @@ fp_hlvd_low:
 
 	xorq	%rdx, %rdx
 
-	movq	$P0, %r8
-	movq	$P1, %r9
-	movq	$P2, %r10
-	movq	$P3, %r11
-	movq	$P4, %r12
-	movq	$P5, %r13
-	movq	$P6, %r14
-	movq	$P7, %r15
+	movq	P0, %r8
+	movq	P1, %r9
+	movq	P2, %r10
+	movq	P3, %r11
+	movq	P4, %r12
+	movq	P5, %r13
+	movq	P6, %r14
+	movq	P7, %r15
 
   	movq 	$1     ,%rax
   	movq 	0(%rsi),%rcx

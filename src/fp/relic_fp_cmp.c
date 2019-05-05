@@ -37,7 +37,7 @@
 
 int fp_cmp_dig(const fp_t a, dig_t b) {
 	fp_t t;
-	int r = RLC_EQ;
+	int r = CMP_EQ;
 
 	fp_null(t);
 
@@ -55,5 +55,5 @@ int fp_cmp_dig(const fp_t a, dig_t b) {
 }
 
 int fp_cmp(const fp_t a, const fp_t b) {
-	return dv_cmp_const(a, b, RLC_FP_DIGS);
+	return dv_cmp_const(a, b, FP_DIGS);
 }

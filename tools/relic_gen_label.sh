@@ -32,8 +32,8 @@ cat << PREAMBLE
  * @ingroup core
  */
 
-#ifndef RLC_LABEL_H
-#define RLC_LABEL_H
+#ifndef RELIC_LABEL_H
+#define RELIC_LABEL_H
 
 #include "relic_conf.h"
 
@@ -88,6 +88,7 @@ REDEF bench
 REDEF err
 REDEF rand
 REDEF test
+REDEF trace
 REDEF util
 
 echo "#undef conf_print"
@@ -148,7 +149,7 @@ REDEF eb
 echo "#undef ep2_st"
 echo "#undef ep2_t"
 echo "#define ep2_st	PREFIX(ep2_st)"
-echo "#define ep2_t	PREFIX(ep2_t)"
+echo "#define ep2_t		PREFIX(ep2_t)"
 echo
 REDEF2 epx ep2
 
@@ -190,4 +191,4 @@ REDEF cp
 
 echo "#endif /* LABEL */"
 echo
-echo "#endif /* !RLC_LABEL_H */"
+echo "#endif /* !RELIC_LABEL_H */"

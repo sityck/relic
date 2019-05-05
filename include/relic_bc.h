@@ -33,8 +33,8 @@
  * @ingroup bc
  */
 
-#ifndef RLC_BC_H
-#define RLC_BC_H
+#ifndef RELIC_BC_H
+#define RELIC_BC_H
 
 #include "relic_conf.h"
 #include "relic_types.h"
@@ -45,9 +45,9 @@
 /*============================================================================*/
 
 /**
- * Length in bytes of the default block cipher length.
+ * Length in bytes of default block cipher length.
  */
-#define RLC_BC_LEN					16
+#define BC_LEN					16
 
 /*============================================================================*/
 /* Function prototypes                                                        */
@@ -62,7 +62,7 @@
  * @param[in] in_len		- the number of bytes to encrypt.
  * @param[in] key			- the key.
  * @param[in] key_len		- the key size in bytes.
- * @return RLC_OK if no errors occurred, RLC_ERR otherwise.
+ * @return STS_OK if no errors occurred, STS_ERR otherwise.
  */
 int bc_aes_cbc_enc(uint8_t *out, int *out_len, uint8_t *in,
 		int in_len, uint8_t *key, int key_len, uint8_t *iv);
@@ -76,9 +76,9 @@ int bc_aes_cbc_enc(uint8_t *out, int *out_len, uint8_t *in,
  * @param[in] in_len		- the number of bytes to decrypt.
  * @param[in] key			- the key.
  * @param[in] key_len		- the key size in bytes.
- * @return RLC_OK if no errors occurred, RLC_ERR otherwise.
+ * @return STS_OK if no errors occurred, STS_ERR otherwise.
  */
 int bc_aes_cbc_dec(uint8_t *out, int *out_len, uint8_t *in,
 		int in_len, uint8_t *key, int key_len, uint8_t *iv);
 
-#endif /* !RLC_BC_H */
+#endif /* !RELIC_BC_H */
